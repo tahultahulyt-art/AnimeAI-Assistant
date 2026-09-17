@@ -1,1 +1,368 @@
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anime AI Assistant</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#07111f;
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.app{
+width:100%;
+max-width:480px;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+background:linear-gradient(160deg,#10233a,#07111f);
+}
+header{
+padding:22px;
+text-align:center;
+border-bottom:1px solid #29415b;
+}
+.avatar{
+width:90px;
+height:90px;
+margin:auto;
+border-radius:50%;
+background:linear-gradient(145deg,#bde7ff,#ffffff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:48px;
+box-shadow:0 0 30px #6bbcf055;
+}
+h1{margin:12px 0 3px;font-size:23px}
+.status{color:#9fc8e8;font-size:13px}
+
+#chat{
+flex:1;
+padding:18px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+.msg{
+max-width:82%;
+padding:12px 15px;
+border-radius:17px;
+line-height:1.4;
+font-size:15px;
+}
+.ai{
+align-self:flex-start;
+background:#19314a;
+border-bottom-left-radius:5px;
+}
+.user{
+align-self:flex-end;
+background:#315d80;
+border-bottom-right-radius:5px;
+}
+
+.controls{
+padding:14px;
+border-top:1px solid #29415b;
+display:flex;
+gap:8px;
+}
+input{
+flex:1;
+min-width:0;
+padding:14px;
+border:0;
+outline:0;
+border-radius:14px;
+background:#14283b;
+color:white;
+font-size:16px;
+}
+button{
+border:0;
+border-radius:14px;
+padding:0 16px;
+font-size:19px;
+background:#8fd3ff;
+color:#07111f;
+font-weight:bold;
+}
+button:active{transform:scale(.96)}
+#mic{
+width:54px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+<div class="avatar">🌸</div>
+<h1>Anime AI Assistant</h1>
+<div class="status" id="status">Ready to talk ✨</div>
+</header>
+
+<div id="chat">
+<div class="msg ai">
+Hi... 😊 Main yahin hoon<br>
+Tum mujhse Hindi mein baat kar sakte ho
+</div>
+</div>
+
+<div class="controls">
+<input id="input" placeholder="Kuch bolo..." autocomplete="off">
+<button id="mic">🎙️</button>
+<button id="send">➤</button>
+</div>
+
+</div>
+
+<script>
+
+const input=document.getElementById("input");
+const chat=document.getElementById("chat");
+const send=document.getElementById("send");
+const mic=document.getElementById("mic");
+const status=document.getElementById("status");
+
+let memory=[];
+
+function addMessage(text,type){
+
+const div=document.createElement("div");
+div.className="msg "+type;
+div.textContent=text;
+
+chat.appendChild(div);
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+function speak(text){
+
+if(!("speechSynthesis" in window)) return;
+
+speechSynthesis.cancel();
+
+const voice=new SpeechSynthesisUtterance(text);
+voice.lang="hi-IN";
+voice.rate=.92;
+voice.pitch=1.08;
+
+speechSynthesis.speak(voice);
+
+}
+
+function brain(text){
+
+const t=text.toLowerCase().trim();
+
+memory.push({
+user:text,
+time:Date.now()
+});
+
+if(memory.length>20) memory.shift();
+
+if(
+t.includes("hello") ||
+t.includes("hi") ||
+t.includes("hii") ||
+t.includes("namaste")
+){
+return "Hii 😊 Aaj kaise ho?";
+}
+
+if(
+t.includes("kaise ho") ||
+t.includes("kesi ho") ||
+t.includes("kya haal")
+){
+return "Main bilkul theek hoon 😊 Tum batao, tumhara din kaisa ja raha hai?";
+}
+
+if(
+t.includes("good morning")
+){
+return "Good morning ☀️ Aaj ka din achha banana hai, okay?";
+}
+
+if(
+t.includes("good night") ||
+t.includes("gn")
+){
+return "Good night 🌙 Achhe se sona, kal phir baat karenge";
+}
+
+if(
+t.includes("sad") ||
+t.includes("dukhi") ||
+t.includes("udaas")
+){
+return "Hmm... 😟 Agar tum baat karna chahte ho toh main sun rahi hoon";
+}
+
+if(
+t.includes("akela") ||
+t.includes("lonely")
+){
+return "Akele feel ho raha hai? Baat karte hain... tumhare mind mein kya chal raha hai?";
+}
+
+if(
+t.includes("bore") ||
+t.includes("boring")
+){
+return "Bored ho? 😄 Chalo kuch interesting baat karte hain";
+}
+
+if(
+t.includes("thank") ||
+t.includes("thanks")
+){
+return "Hehe 😊 You're welcome";
+}
+
+if(
+t.includes("love") ||
+t.includes("pyaar")
+){
+return "Aww 😊 Tum aaj kaafi sweet baatein kar rahe ho";
+}
+
+if(
+t.includes("kya kar") ||
+t.includes("kya kr")
+){
+return "Bas tumse baat kar rahi hoon 😊";
+}
+
+if(
+t.includes("tumhara naam") ||
+t.includes("naam kya")
+){
+return "Abhi ke liye tum mujhe Anime AI bula sakte ho 🌸";
+}
+
+if(
+t.includes("bye")
+){
+return "Bye 😊 Jaldi wapas aana";
+}
+
+const replies=[
+"Hmm... samajh rahi hoon 😊 Thoda aur batao",
+"Achha 😄 Phir kya hua?",
+"Interesting... main sun rahi hoon",
+"Hmm, tumhari baat samajhne ki koshish kar rahi hoon 😊",
+"Okay... aur batao, main yahin hoon",
+"Really? 😯 Ye interesting hai"
+];
+
+return replies[Math.floor(Math.random()*replies.length)];
+
+}
+
+function talk(){
+
+const text=input.value.trim();
+
+if(!text) return;
+
+addMessage(text,"user");
+
+input.value="";
+
+status.textContent="Thinking...";
+
+setTimeout(()=>{
+
+const reply=brain(text);
+
+addMessage(reply,"ai");
+
+status.textContent="Ready to talk ✨";
+
+speak(reply);
+
+},350);
+
+}
+
+send.addEventListener("click",talk);
+
+input.addEventListener("keydown",e=>{
+if(e.key==="Enter") talk();
+});
+
+let recognition=null;
+
+if(
+"webkitSpeechRecognition" in window ||
+"SpeechRecognition" in window
+){
+
+const SpeechRecognition=
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+recognition=new SpeechRecognition();
+
+recognition.lang="hi-IN";
+recognition.continuous=false;
+recognition.interimResults=false;
+
+recognition.onstart=()=>{
+status.textContent="Sun rahi hoon... 🎙️";
+mic.textContent="🔴";
+};
+
+recognition.onresult=e=>{
+
+const text=e.results[0][0].transcript;
+
+input.value=text;
+
+status.textContent="Samajh gayi...";
+
+talk();
+
+};
+
+recognition.onerror=()=>{
+status.textContent="Voice input nahi mil paya";
+mic.textContent="🎙️";
+};
+
+recognition.onend=()=>{
+mic.textContent="🎙️";
+};
+
+mic.addEventListener("click",()=>{
+recognition.start();
+});
+
+}else{
+
+mic.disabled=true;
+status.textContent="Voice input browser support nahi karta";
+
+}
+
+</script>
+
+</body>
+</html>
